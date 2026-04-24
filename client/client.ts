@@ -2,15 +2,17 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 
-// Configuración base
-const provider = anchor.AnchorProvider.env();
-anchor.setProvider(provider);
+// Configuración base:  En esta sección se establece la conexión entre el cliente (frontend o script)
+/// y el programa desplegado en la blockchain de Solana.
+const provider = anchor.AnchorProvider.env();// Se obtiene el provider desde el entorno 
+//(Anchor CLI / configuración local)
+anchor.setProvider(provider); // Se establece como provider global para todas las operaciones
 
-const program = anchor.workspace.Escuela as Program;
+const program = anchor.workspace.Escuela as Program;// Se obtiene el programa compilado desde workspace (IDL)
 
-const wallet = provider.wallet;
+const wallet = provider.wallet;// Se obtiene la wallet del usuario (quien firma las transacciones)
 
-// 🔑 Obtener PDA de la escuela
+// Obtener PDA de la escuela: Calcula la direccion PDA de la cuenta de la escuela 
 async function getEscuelaPDA() {
   const [escuelaPDA] = await PublicKey.findProgramAddress(
     [
@@ -24,6 +26,9 @@ async function getEscuelaPDA() {
 }
 
 //////////////////////////// CREAR ESCUELA ////////////////////////////
+//Convoca la intruccion on-chaim para crear una nueva escuela 
+//su flujo es: Calcular el PDA de la escuela- Se llama el método del programa
+//se envia la transaccion de la red 
 export async function crearEscuela(nombre: string) {
 
   const escuelaPDA = await getEscuelaPDA();
@@ -41,6 +46,8 @@ export async function crearEscuela(nombre: string) {
 }
 
 //////////////////////////// AGREGAR PROFESOR ////////////////////////////
+//Permite agregar un profesor a la escuela existente (Se optiene en PDA, 
+//invoca el metodo y refirma la transaccion)
 export async function agregarProfesor(
   nombre: string,
   especialidad: string,
@@ -61,6 +68,8 @@ export async function agregarProfesor(
 }
 
 //////////////////////////// VER PROFESORES ////////////////////////////
+// Obtiene la información almacenada en la cuenta Escuela.
+//En este punto no se usa el RPC, se hace un fech directo de la escuela 
 export async function verProfesores() {
 
   const escuelaPDA = await getEscuelaPDA();
@@ -71,6 +80,7 @@ export async function verProfesores() {
 }
 
 //////////////////////////// EDITAR PROFESOR (NUEVO) ////////////////////////////
+//Modifica los datos del profesor existente, localizando la cuenta 
 export async function editarProfesor(
   nombre: string,
   nuevaEspecialidad: string,
@@ -91,6 +101,7 @@ export async function editarProfesor(
 }
 
 //////////////////////////// ELIMINAR PROFESOR ////////////////////////////
+//Elimina un profesor del sistema 
 export async function eliminarProfesor(nombre: string) {
 
   const escuelaPDA = await getEscuelaPDA();
@@ -107,6 +118,7 @@ export async function eliminarProfesor(nombre: string) {
 }
 
 //////////////////////////// ALTERNAR ESTADO ////////////////////////////
+//Este permite cambiar el estado del profesor de activo e inactivo y viceversa 
 export async function alternarEstado(nombre: string) {
 
   const escuelaPDA = await getEscuelaPDA();
