@@ -86,7 +86,7 @@ pub mod escuela {
 //Permite recorrer cada profesor 
         for profesor in profesores.iter_mut() { //Comparación con el nombre 
 
-            if profesor.nombre == nombre { /realiza la comparación con el nombre 
+            if profesor.nombre == nombre { //realiza la comparación con el nombre 
  //Se actualiza unicamente los campos necesarios (especialidad y experiencia)
 
                 profesor.especialidad = nueva_especialidad.clone();
